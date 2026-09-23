@@ -1,0 +1,8 @@
+cff-version: 1.2.0
+message: "Please cite this software when using it in your research. Use the website's citation panel to include its public URL and your access date."
+type: software
+title: "C. elegans Genotype Decoder"
+version: 1.0.0
+authors:
+  - family-names: Yao
+    given-names: Zihao

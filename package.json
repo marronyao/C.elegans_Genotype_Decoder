@@ -1,0 +1,8 @@
+{
+  "name": "celegans-genotype-decoder",
+  "version": "1.0.0",
+  "private": true,
+  "description": "A static genotype structure explorer with British English text.",
+  "scripts": { "test": "node --test" },
+  "engines": { "node": ">=22" }
+}
