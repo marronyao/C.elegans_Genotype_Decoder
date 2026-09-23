@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en-GB">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="A simple tool for exploring the structure of a C. elegans genotype.">
+    <title>C. elegans Genotype Decoder</title>
+    <link rel="icon" href="logo.svg?v=a18ded290c9f" type="image/svg+xml" sizes="any">
+    <script src="theme.js"></script>
+    <link rel="stylesheet" href="styles.css">
+    <script src="site-ui.js" defer></script>
+    <script src="src/normalise.js" defer></script>
+    <script src="src/marker-catalogue.js" defer></script>
+    <script src="src/parser.js" defer></script>
+    <script src="src/strain-catalogue.js" defer></script>
+    <script src="src/knowledge.js" defer></script>
+    <script src="app.js" defer></script>
+  </head>
+  <body>
+    <main class="page">
+      <header>
+        <div class="site-toolbar">
+          <a class="brand-mark" href="./" aria-label="C. elegans Genotype Decoder home"><img src="logo.svg?v=a18ded290c9f" width="76" height="76" alt="DNA double helix and C. elegans worm logo"></a>
+          <div class="toolbar-actions">
+            <a href="#citation-heading" class="cite-link">Cite this tool</a>
+            <button type="button" id="theme-toggle" class="secondary" aria-pressed="false">Dark mode</button>
+          </div>
+        </div>
+        <p class="eyebrow">A small tool for curious researchers</p>
+        <h1><i>C. elegans</i><br>Genotype Decoder</h1>
+        <p class="introduction">Start with a genotype. Explore its written structure, one part at a time.</p>
+      </header>
+
+      <section class="panel" aria-labelledby="input-heading">
+        <div class="section-heading">
+          <h2 id="input-heading">Your genotype</h2>
+          <span class="badge">Structure explorer</span>
+        </div>
+        <form id="genotype-form">
+          <label for="genotype">Enter or paste a genotype</label>
+          <p id="input-help" class="hint">Enter an array or a general expression. Semicolons separate expressions; + separates constructs; :: and _ separate fragments outside brackets. Pmtl-2 is standardised to mtl-2p. Possible missing hyphens need your confirmation.</p>
+          <textarea id="genotype" name="genotype" rows="5" spellcheck="false" aria-describedby="input-help" placeholder="e.g. dvIs100 [unc-54p::Aβ1-42::unc-54 3'UTR + mtl-2p::GFP]"></textarea>
+          <div class="actions">
+            <button type="submit" class="primary">Parse genotype</button>
+            <button type="button" id="example-button" class="secondary">Use example</button>
+          </div>
+        </form>
+      </section>
+
+      <section class="panel results" aria-labelledby="results-heading">
+        <div class="section-heading">
+          <h2 id="results-heading">Structural breakdown</h2>
+        </div>
+        <p id="status" role="status" aria-live="polite">Your results will appear here after you parse a genotype.</p>
+        <div id="results"></div>
+      </section>
+      <footer>Gene names, promoter-associated gene names, gene-linked allele identifiers, transgene identifiers and candidate strain names are sent to Alliance of Genome Resources for English annotations. Protein candidates are queried in UniProtKB using the corresponding gene name. Promoters show corresponding gene expression as a reference, not a verified promoter-fragment pattern. Known fluorescent proteins and selected transformation markers have local annotations. UTRs and non-fluorescent tags are not annotated. Common strains, fluorescent proteins and selected markers have source-backed offline summaries; other database lookups require an internet connection. The example is illustrative and has not been checked against a strain record.</footer>
+      <section class="panel citation-panel" aria-labelledby="citation-heading">
+        <h2 id="citation-heading">Cite this tool</h2>
+        <p class="hint">If this tool supports your research, please cite it. Citation author: Zihao Yao.</p>
+        <div class="citation-fields">
+          <div><label for="citation-style">Citation format</label><select id="citation-style"><option value="apa">APA 7</option><option value="mla">MLA 9</option><option value="chicago">Chicago</option><option value="bibtex">BibTeX</option></select></div>
+          <div><label for="citation-url">Website URL</label><input id="citation-url" type="url" placeholder="https://your-published-website.org/" aria-describedby="citation-help"></div>
+        </div>
+        <p id="citation-help" class="hint">Use the public website URL. No publication date has been assigned; citations use “n.d.” or omit the year.</p>
+        <textarea id="citation-output" rows="5" readonly aria-label="Formatted citation"></textarea>
+        <div class="actions"><button type="button" id="copy-citation" class="primary">Copy citation</button></div>
+        <p id="citation-status" class="hint" role="status" aria-live="polite"></p>
+      </section>
+      <footer class="developer-footer">
+        <p><span>Version:</span> C. elegans Genotype Decoder V1.0</p>
+        <p><span>Developer:</span> Marron Z. Yao</p>
+        <p><span>Department:</span> Erasmus MC, Rotterdam, The Netherlands</p>
+        <p><span>Email:</span> <a href="mailto:marronzyao@gmail.com">marronzyao@gmail.com</a></p>
+        <a class="logo-download" href="logo.svg" download="celegans-genotype-decoder-logo.svg">Download logo (SVG)</a>
+      </footer>
+    </main>
+  </body>
+</html>
+
+
+
+
+
+
