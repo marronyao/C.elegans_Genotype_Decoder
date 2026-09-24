@@ -131,7 +131,7 @@ Results include `original`, `normalised`, `changes`, `suggestions`, `identifiers
 
 Changes are recorded in execution order across width, escape, promoter and confirmed stages. Each change index refers to the string immediately before that edit; replay records in order. Suggestion indices refer to the string before confirmed corrections. Fragment `start` and exclusive `end` offsets refer to the final normalised string. All offsets are zero-based UTF-16 positions; the interface displays positions starting at one.
 
-Structural parsing is local to the browser. After spelling review, gene-family fragments are looked up in Alliance of Genome Resources; simple promoters are annotated through their corresponding genes. Transgene identifiers and candidate strain names are also resolved. Known fluorescent proteins and selected transformation markers use source-backed local annotations; UTRs, non-fluorescent tags and unsupported fragments remain unannotated. There are no tissue predictions or Methods generation.
+Structural parsing is local to the browser. After spelling review, gene-family fragments are looked up in Alliance of Genome Resources; simple promoters are annotated through their corresponding genes. Transgene identifiers and candidate strain names are also resolved. Known fluorescent proteins and selected transformation markers use source-backed local annotations; UTRs and selected amyloid-beta peptides have source-backed local annotations; non-fluorescent tags and unsupported fragments remain unannotated. There are no tissue predictions or Methods generation.
 
 ## Gene and allele knowledge annotations
 
@@ -171,11 +171,45 @@ Supported protein names: GFP, EGFP/eGFP, YFP, EYFP/eYFP, CFP, ECFP/eCFP, mCherry
 
 FPbase supplies the ordinary protein spectral references. pHTomato uses the Li and Tsien original study (https://pmc.ncbi.nlm.nih.gov/articles/PMC3959862/): 550/580 nm excitation/emission peaks and apparent pKa about 7.8. Its intensity increases with pH; quantitative pH requires calibration and controls, rather than interpreting intensity directly as pH. The snapshot preserves the original paper's measurement context; other studies may report different measured peaks.
 
-Marker context uses WormBook's transformation marker table (https://www.ncbi.nlm.nih.gov/books/NBK19648/table/A10923/). Supported contexts include rol-6(su1006), bare rol-6 (conditional explanation), rol-6(+) (not the Roller allele), pRF4, pPD10.46, unc-22 antisense, unc-119(+) and pha-1(+). Rescue markers require the relevant mutant host; other alleles do not inherit these annotations. UTRs and non-fluorescent tags such as FLAG, HA and NLS remain unannotated. This does not prevent fluorescence annotation when a recognised FP is used as a fusion tag.
+Marker context uses WormBook's transformation marker table (https://www.ncbi.nlm.nih.gov/books/NBK19648/table/A10923/). Supported contexts include rol-6(su1006), bare rol-6 (conditional explanation), rol-6(+) (not the Roller allele), pRF4, pPD10.46, unc-22 antisense, unc-119(+) and pha-1(+). Rescue markers require the relevant mutant host; other alleles do not inherit these annotations. UTRs are covered by the construct catalogue. Non-fluorescent tags such as FLAG, HA and NLS remain unannotated. This does not prevent fluorescence annotation when a recognised FP is used as a fusion tag.
 
 Try `eGFP; GFP; YFP; mCherry; pHTomato; rol-6(su1006); rol-6(+); unc-119(+); pRF4; unc-54 3'UTR; FLAG`.
 
-## Reference protein annotations
+## UTR and amyloid-beta construct annotations
+
+`src/construct-catalogue.js` adds offline, source-linked annotations for regulatory
+UTR elements and selected heterologous amyloid-beta peptides. Load it before the
+parser and knowledge module. Entries include a review date and distinguish
+recognised notation from experimentally verified construct identity.
+
+- UTR examples: `unc-54 3'UTR`, `unc-54 3’ UTR`, `unc-54(3′UTR)`,
+  `unc-54_3UTR`, `unc-54-3'UTR`, `let-858 3′UTR`, `tbb-2 3′UTR`,
+  `glh-2 3′UTR`, and standalone `3′UTR` or `5′UTR`. A source gene is optional;
+  an unlisted source gets a general UTR explanation, not a verified gene record.
+  Gene/UTR suffixes remain a single fragment with kind `utr`, `gene` (or null),
+  and `utrEnd`. A separate `gene::3′UTR` does not establish the UTR's source.
+- Peptide examples: `Abeta1-42`, `Aβ1-42`, `Aβ₁–₄₂`, `Abeta (1-42)` and
+  `A-beta1-42`. Matching is case-insensitive. Explicit 1–40 and 3–42 forms are
+  also supported and retain their distinct identities. Fragment kind `peptide`
+  includes `peptide` and the nominal `peptideLength`. Bare `Abeta`, unsupported
+  lengths and mutation-bearing names remain unknown rather than selecting a variant.
+- Original input and offsets are preserved. Prime/dash/subscript equivalence is
+  used only for matching. The API returns `utr` or `peptide` annotation records;
+  neither performs a worm protein lookup. UTRs do not imply the source protein.
+- Descriptions explain regulatory roles and peptide identity without assigning
+  tissue specificity or a phenotype. The Aβ record distinguishes the named
+  peptide from the actual mature product, including the reported Aβ3–42
+  processing in CL2006/CL2120 and the Aβ1–42 model GMC101.
+
+Sources: [WormBook translation](https://www.ncbi.nlm.nih.gov/books/NBK19664/),
+[2025 reporter/UTR study](https://academic.oup.com/genetics/article/230/2/iyaf076/8127868),
+[human APP reference](https://www.uniprot.org/uniprotkb/P05067/entry),
+[McColl et al. 2009](https://pmc.ncbi.nlm.nih.gov/articles/PMC2755678/) and
+[McColl et al. 2012](https://pmc.ncbi.nlm.nih.gov/articles/PMC3519830/).
+Reviewed 2026-09-24. Qualified UTR forms such as `3′UTR(long)`, arbitrary
+regulatory elements and non-fluorescent tags are not yet resolved.
+
+## Endogenous reference protein annotations
 
 Examples: `hsp-4p::hsp-4::eGFP`, `hsp-4p::HSP-4::EGFP`, `HSP-4::eGFP`. Uppercase/mixed-case simple protein names (`HSP-4`, `Hsp-4`) are recognised as `protein` candidates and map to lowercase `hsp-4` for lookup without rewriting the input. Lowercase simple gene fragments gain `proteinCandidate`, `protein` and `proteinContext` fields when joined by `::` to a promoter, gene/protein or fluorescent-protein neighbour; they retain their gene classification and annotation. Fluorescent-protein aliases are handled separately. This is a notation-based coding-context inference, not proof of expression, translational fusion, reading frame or protein activity.
 

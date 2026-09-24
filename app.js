@@ -48,6 +48,8 @@ function setStatus(message, warning = false) {
 
 function describeFragment(element) {
   const text = element.text.trim() || "[Empty fragment]";
+  if (element.kind === "utr") return `${text} — ${element.utrEnd}′ untranslated region; source gene: ${element.gene || "unspecified"}; see annotation below`;
+  if (element.kind === "peptide") return `${text} — amyloid-beta peptide: ${element.peptide}; see annotation below`;
   if (element.kind === "fluorescent_protein") return `${text} — fluorescent protein; see annotation below`;
   if (element.kind === "marker") return `${text} — transformation marker; see annotation below`;
   if (element.kind === "protein" || element.proteinCandidate) return `${text} — protein/coding-sequence candidate: ${element.protein}; corresponding gene: ${element.gene}; see annotation below`;
@@ -166,9 +168,9 @@ function showGeneAnnotations(parsed, run) {
       const annotation = await knowledge.annotate(fragment);
       if (run !== annotationRun) return;
       body.textContent = "";
-      for (const record of [annotation.protein, annotation.fluorescent, annotation.marker, annotation.gene, annotation.allele, annotation.promoter, annotation.transgene, annotation.strain].filter(Boolean)) {
+      for (const record of [annotation.utr, annotation.peptide, annotation.protein, annotation.fluorescent, annotation.marker, annotation.gene, annotation.allele, annotation.promoter, annotation.transgene, annotation.strain].filter(Boolean)) {
         const text = document.createElement("p");
-        const label = { promoter: "Corresponding gene", protein: "Reference protein", gene: "Gene", allele: "Allele", transgene: "Transgene", strain: "Strain", fluorescent_protein: "Fluorescent protein", marker: "Marker" }[record.type];
+        const label = { utr: "Regulatory element", peptide: "Peptide", promoter: "Corresponding gene", protein: "Reference protein", gene: "Gene", allele: "Allele", transgene: "Transgene", strain: "Strain", fluorescent_protein: "Fluorescent protein", marker: "Marker" }[record.type];
         text.textContent = `${label}: ${record.symbol || record.query} — ${record.status}${record.id ? ` (${record.id})` : ""}. ${record.summary}`;
         body.append(text);
         if (record.type === "protein" && record.status === "matched") {
