@@ -2,7 +2,7 @@
 
 A dependency-free static webpage for exploring genotype and general expression structure, with a British English interface. It preserves unfamiliar text; it does not claim to understand the biology of every expression.
 
-**Current version: C. elegans Genotype Decoder V1.0** (`1.0.0` in package metadata).
+**Current version: C. elegans Genotype Decoder V1.1** (`1.1.0` in package metadata).
 
 ## Quick start for researchers
 
@@ -30,7 +30,7 @@ For browser upload, use **Add file → Upload files** (or the upload link on a n
 
 ### Check the published website
 
-- Open the exact Pages URL in a private/incognito window. Confirm the logo, favicon and styles load, and that the version footer says V1.0.
+- Open the exact Pages URL in a private/incognito window. Confirm the logo, favicon and styles load, and that the version footer says V1.1.
 - Parse the built-in example and `N2; eGFP; pRF4` to check structural parsing and local summaries.
 - Try `unc-30(e191); HSP-4::eGFP` to check live Alliance and UniProt annotations. Network errors should appear as unavailable annotations without preventing structural results.
 - Switch themes and reload. Select each citation format, check the public URL, and test copying. Try a narrow/mobile window too.
