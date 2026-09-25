@@ -1,5 +1,6 @@
 (function (root) {
   "use strict";
+  const constructs = typeof module !== "undefined" && module.exports ? require("./construct-catalogue.js") : root.ConstructCatalogue;
   const markers = typeof module !== "undefined" && module.exports ? require("./marker-catalogue.js") : root.MarkerCatalogue;
   const { normaliseInput } = typeof module !== "undefined" && module.exports
     ? require("./normalise.js") : root.GenotypeNormaliser;
@@ -37,6 +38,8 @@
   }
 
   function classifyFragment(value) {
+    const constructKind = constructs.classify(value);
+    if (constructKind) return constructKind;
     const markerKind = markers.classify(value);
     if (markerKind) return { kind: markerKind, verified: false };
     if (readIdentifier(value) || /^(?:WB:)?WBTransgene\d{8}$/.test(value)) return { kind: "transgene", verified: false };
@@ -90,7 +93,17 @@
         warn("EMPTY_CONSTRUCT", "An empty expression or construct was found beside a separator or inside brackets.", component.start);
         return;
       }
-      const elements = split(component.text, ["::", "_"], component.start).map(part => {
+      const parts = split(component.text, ["::", "_"], component.start);
+      // A gene_3'UTR suffix names one regulatory element, not a coding fusion.
+      for (let i = 0; i < parts.length - 1; i++) {
+        const next = parts[i + 1];
+        const joined = component.text.slice(parts[i].start - component.start, next.end - component.start);
+        if (next.precedingSeparator === "_" && constructs.classify(joined.trim())?.kind === "utr") {
+          parts[i] = { ...parts[i], text: joined, end: next.end };
+          parts.splice(i + 1, 1);
+        }
+      }
+      const elements = parts.map(part => {
         const value = part.text.trim();
         const fragment = { ...part, ...classifyFragment(value) };
         if (!value) warn("EMPTY_ELEMENT", "An empty fragment was found beside '::' or '_'.", part.start);

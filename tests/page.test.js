@@ -83,7 +83,7 @@ test("asynchronous annotations render safely and stale responses cannot overwrit
     fetch: () => new Promise(resolve => requests.push(resolve)),
     document: { querySelector: id => elements[id], createElement: element } });
   const root = path.join(__dirname, "..");
-  for (const file of ["src/normalise.js", "src/marker-catalogue.js", "src/parser.js", "src/strain-catalogue.js", "src/knowledge.js", "app.js"]) vm.runInContext(fs.readFileSync(path.join(root, file), "utf8"), context);
+  for (const file of ["src/normalise.js", "src/marker-catalogue.js", "src/construct-catalogue.js", "src/parser.js", "src/strain-catalogue.js", "src/knowledge.js", "app.js"]) vm.runInContext(fs.readFileSync(path.join(root, file), "utf8"), context);
   const text = node => [node.textContent, ...node.children.map(text)].join("\n");
   const submit = () => elements["#genotype-form"].handlers.submit({ preventDefault() {} });
   elements["#genotype"].value = "unc-30";
@@ -120,6 +120,14 @@ test("asynchronous annotations render safely and stale responses cannot overwrit
   assert.match(rendered, /Sensor properties: pH-sensitive intensity reporter/);
   assert.match(rendered, /Marker: pRF4/);
   assert.match(rendered, /Source: FPbase/);
+  assert.match(rendered, /Regulatory element: unc-54 3′ UTR/);
+  elements["#genotype"].value = "Abeta1-42::unc-54 3’ UTR";
+  elements["#genotype"].handlers.input();
+  submit();
+  await new Promise(resolve => setImmediate(resolve));
+  assert.match(text(elements["#results"]), /Peptide: Aβ1-42/);
+  assert.match(text(elements["#results"]), /42 residues/);
+  assert.doesNotMatch(text(elements["#results"]), /Unknown or unclassified|undefined/);
   assert.equal(requests.length, 1);
   elements["#genotype"].value = "HSP-4::eGFP";
   elements["#genotype"].handlers.input();

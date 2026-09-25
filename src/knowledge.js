@@ -1,5 +1,6 @@
 (function (root) {
   "use strict";
+  const constructs = typeof module !== "undefined" && module.exports ? require("./construct-catalogue.js") : root.ConstructCatalogue;
   const markers = typeof module !== "undefined" && module.exports ? require("./marker-catalogue.js") : root.MarkerCatalogue;
   const catalogue = typeof module !== "undefined" && module.exports ? require("./strain-catalogue.js") : root.StrainCatalogue;
   const API = "https://www.alliancegenome.org/api/search";
@@ -13,7 +14,7 @@
   }
   const strings = value => Array.isArray(value) ? value.filter(v => typeof v === "string") : [];
   function candidates(parsed) {
-    const fragments = parsed.fragments.filter(f => kinds.has(f.kind));
+    const fragments = parsed.fragments.filter(f => kinds.has(f.kind) || ["utr", "peptide"].includes(f.kind));
     const identifiers = parsed.identifiers.filter(id => Number.isInteger(id.start))
       .map(id => ({ ...id, kind: "transgene" }));
     return [...fragments, ...identifiers].sort((a, b) => a.start - b.start);
@@ -166,6 +167,7 @@
       }
     }
     async function annotate(fragment) {
+      if (["utr", "peptide"].includes(fragment.kind)) return { [fragment.kind]: constructs.annotate(fragment) };
       if (!kinds.has(fragment.kind)) return null;
       if (fragment.kind === "protein") return { protein: await resolveProtein(fragment) };
       if (fragment.kind === "fluorescent_protein") return { fluorescent: markers.fluorescent(fragment.text.trim()) };

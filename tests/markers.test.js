@@ -58,7 +58,7 @@ test("marker context depends on the allele or rescue construct; existing gene ki
   assert.match((await client.annotate(fragment("pRF4"))).marker.summary, /su1006/);
   assert.match((await client.annotate(fragment("pPD10.46"))).marker.summary, /twitching/);
 });
-test("UTRs, tags, unknown sensors and partial protein names remain unannotated", async () => {
+test("Tags, unknown sensors and partial protein names remain unannotated", async () => {
   const client = createClient();
   for (const text of ["unc-54 3'UTR", "FLAG", "HA", "NLS", "GFPmutUnknown", "mCherry2", "pHTomatoVariant", "unc-22"]) {
     assert.equal(marker(fragment(text)), null);
